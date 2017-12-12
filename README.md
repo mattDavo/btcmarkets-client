@@ -18,10 +18,10 @@ print(market.get_price("BTC", "AUD"))
 print(market.get_order_book("BTC", "AUD"))
 
 # Buy 0.001 BTC @ 230 AUD
-market.buy("BTC", "AUD", 230, 0.001, "Limit", "1")
+print(market.buy("BTC", "AUD", 230, 0.001, "Limit", "1"))
 
 # Sell 0.001 BTC @ 240 AUD
-market.sell("BTC", "AUD", 240, 0.001, "Limit", "1")
+print(market.sell("BTC", "AUD", 240, 0.001, "Limit", "1"))
 
 # Cancel orders with IDs 1, 2, 3 and 4
 print(market.cancel_orders([1, 2, 3, 4]))
