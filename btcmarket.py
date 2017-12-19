@@ -55,6 +55,15 @@ class Balance(object):
         self._balance = balance
         self._pending_funds = pending_funds
     
+    # Balance property
+    @property
+    def balance(self):
+        return self._balance
+    
+    @balance.setter
+    def balance(self, value):
+        self._balance = value
+    
     def __str__(self):
         balance_str = "Balance: " + str(self._balance) + " " + self._currency + "    Pending Funds: " + \
             str(self._pending_funds) + " " + self._currency + "\n"
@@ -62,13 +71,23 @@ class Balance(object):
 
 
 class Account(object):
-    def __init__(self, accounts):
-        self._accounts = accounts
+    def __init__(self, balances):
+        self._balances = balances
+    
+    def add_balance(self, balance: Balance):
+        """Adds/updates an account balance"""
+        for i, b in enumerate(self._balances):
+            if b.currency == balance.currency:
+                self._balances[i] = balance
+                break
+        else:
+            self._balances.append(balance)
+                
     
     def __str__(self):
         account_str = "Account Balances:\n"
-        for account in self._accounts:
-            account_str += str(account)
+        for balance in self._balances:
+            account_str += str(balance)
         return account_str
 
 
@@ -276,5 +295,43 @@ class BTCMarket(BTCMarketAPI):
             trades.append(Trade(trade["tid"], instrument, currency, trade["amount"],
                 trade["price"], trade["date"]))
         return trades
+    
+    def get_orders(self, instrument: str, currency: str, limit: int, since: int):
+        """Returns a list of MyOrders since id since"""
+        data = {
+            "currency": currency,
+            "instrument": instrument,
+            "limit": limit,
+            "since": since
+        }
+        orders_data = self.post_request("/order/history", data)
+        print(orders_data)
+        my_orders = []
+        if orders_data == None or orders_data["success"] == False:
+            return None
+        for order in orders_data["orders"]:
+            my_orders.append(MyOrder(order["instrument"], order["currency"], order["price"] \
+                / number_converter, order["volume"] / number_converter, order["orderSide"],
+                order["id"]))
+        return my_orders
+    
+    def get_open_orders(self, instrument: str, currency: str, limit: int, since: int):
+        """Returns a list of MyOrders that are open"""
+        data = {
+            "currency": currency,
+            "instrument": instrument,
+            "limit": limit,
+            "since": since
+        }
+        open_orders_data = self.post_request("/order/open", data)
+        print(open_orders_data)
+        my_open_orders = []
+        if open_orders_data == None or open_orders_data["success"] == False:
+            return None
+        for order in open_orders_data["orders"]:
+            my_open_orders.append(MyOrder(order["instrument"], order["currency"], order["price"] \
+                / number_converter, order["volume"] / number_converter, order["orderSide"],
+                order["id"]))
+        return my_open_orders
         
         

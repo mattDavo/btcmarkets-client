@@ -36,8 +36,17 @@ print(market.get_trading_fee())
 
 # Get trades since trade with id 995479884
 trades = market.get_trades("BTC", "AUD", since=995479884)
-
 for trade in trades:
     print(trade)
+
+# Get orders
+myorders = market.get_orders("BTC", "AUD", 20, 0)
+for order in myorders:
+    print(order)
+
+# Get open orders
+myorders = market.get_open_orders("XRP", "AUD", 10, 0)
+for order in myorders:
+    print(order)
 
 ```
